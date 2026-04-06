@@ -4,13 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.Icon
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,7 +28,17 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    UserProfileScreen()
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        UserProfileScreen()
+
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), thickness = 2.dp)
+
+                        CalculadoraDeSaludScreen()
+                    }
                 }
             }
         }
@@ -49,7 +58,7 @@ fun UserProfileScreen() {
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -72,6 +81,50 @@ fun UserProfileScreen() {
             text = "Seguidores: ${followerCount ?: 0}",
             color = statusColor,
             style = MaterialTheme.typography.headlineSmall
+        )
+    }
+}
+
+@Composable
+fun CalculadoraDeSaludScreen() {
+    var pesoInput by remember { mutableStateOf("") }
+    var alturaInput by remember { mutableStateOf("") }
+
+    val pesoValidado = pesoInput.toDoubleOrNull() ?: 0.0
+    val alturaValidada = alturaInput.toDoubleOrNull() ?: 0.0
+
+    val resultadoClasificacion = clasificarIMC(pesoValidado, alturaValidada)
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = "Calculadora de IMC",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = pesoInput,
+            onValueChange = { pesoInput = it },
+            label = { Text("Ingresa tu peso (kg)") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = alturaInput,
+            onValueChange = { alturaInput = it },
+            label = { Text("Ingresa tu altura (m)") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Text(
+            text = "Categoría: $resultadoClasificacion",
+            style = MaterialTheme.typography.headlineMedium
         )
     }
 }

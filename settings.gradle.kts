@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ProfileValidator"
+rootProject.name = "HealthCalculator"
 include(":app")
  
